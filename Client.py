@@ -2,8 +2,11 @@ import socket
 PORT=7447
 MESSAGE_LEN_SIZE=1024
 ENCODING ='utf-8'
+NAME=""
 
 def main():
+    global NAME
+    NAME=input("we need to know who are you?")
     addrss = socket.gethostbyname(socket.gethostname())
     Host_info = ("192.168.131.1", PORT)
 
@@ -53,16 +56,54 @@ def main():
          if message:
              print(message)
 
+     if "want push" in Request:
+         message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+         if message:
+             print(message)
+
+         big_string = ""
+         file_name = input("Enter file name")
+         big_string += "Go to Push#"
+         big_string += str(file_name)
+         big_string += '%'
+         file_path_local = input("Enter file path local")
+         file_path_server = input("Enter file path server")
+         big_string += file_path_server
+
+         with open(f"{file_path_local}", "r") as f:
+             content = f.read()
+
+         big_string += "&"
+         big_string += str(content)
+         print(big_string)
+         big_string+="$"
+         commit=input("Enter commit message")
+         big_string+=commit
+         send_msg(s, big_string)
+         message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+         if message:
+             print(message)
+     if Request == "ok":
+         message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+         if message:
+             print(message)
+
+
+
+
 
 
 
 def send_msg(client,msg):
-  message = msg.encode(ENCODING)
-  msg_len= len(message)
-  msg_len =str(msg_len).encode(ENCODING)
-  msg_len +=b' '*(MESSAGE_LEN_SIZE-len(msg_len))
-  client.send(msg_len)
-  client.send(message)
+
+     message = msg.encode(ENCODING)
+     msg_len= len(message)
+     msg_len =str(msg_len).encode(ENCODING)
+     msg_len +=b' '*(MESSAGE_LEN_SIZE-len(msg_len))
+     client.send(msg_len)
+     client.send(message)
+
+
 
 
 
