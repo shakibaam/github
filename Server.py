@@ -83,7 +83,16 @@ def handle_client(connection, addrss):
             create_dir(string[1], parent_dir)
             #a file that store commits about this repo
             repo_commit=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,string[1],"commits")
+            repo_commit+=".txt"
             f = open(repo_commit, "x")
+            contributer=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,string[1],"contributer")
+            contributer+=".txt"
+            f = open(contributer, "x")
+
+            with open(contributer, "w") as f:
+                f.write(username)
+
+
             string = "Repository Created Successfully what do you want now ? "
             connection.send(string.encode(ENCODING))
 
@@ -135,8 +144,12 @@ def handle_client(connection, addrss):
             splitt=str(msg).split("#")
             which_user=splitt[1]
             which_repo=splitt[2]
-            repo_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',which_user,which_repo)
-            connection.send(str(repo_path).encode(ENCODING))
+            if os.path.exists(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',which_user,which_repo)):
+             repo_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',which_user,which_repo)
+             connection.send(str(repo_path).encode(ENCODING))
+            else:
+                string="what you want nothing found...try again"
+                connection.send(str(string).encode(ENCODING))
 
 
 
