@@ -2,10 +2,8 @@ import csv
 import socket
 import threading
 import os
-#lets Go#username:password  sign up
-#log in#user:pass  sign in
-#create_Repo:RepoName
-#subDir#Repo:DirectoryInRepo
+
+
 
 
 PORT = 7447
@@ -33,7 +31,7 @@ def start(server):
 def handle_client(connection, addrss):
     print("new connection from {}".format(addrss))
     string = "Hello Welcome To github..  :)\n sign in or sign up?"
-    username=""
+    username = ""
     connection.send(string.encode(ENCODING))
     connected = True
     while connected:
@@ -44,30 +42,30 @@ def handle_client(connection, addrss):
         if msg == "disconnect":
             connection.send("Byee..hope to see you again".encode(ENCODING))
             connected = False
-        if msg=="sign up":
-            string ="choose your user pass and send like==>lets Go#username:password"
+        if msg == "sign up":
+            string = "choose your user pass and send like==>lets Go#username:password"
             connection.send(string.encode(ENCODING))
 
         if "lets Go" in msg:
-            string=str(msg).split("#")
-            parent_dir="C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase"
-            new_user(string[1].split(":")[0],string[1].split(":")[1])
+            string = str(msg).split("#")
+            parent_dir = "C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase"
+            new_user(string[1].split(":")[0], string[1].split(":")[1])
             create_dir(string[1].split(":")[0], parent_dir)
             string = "yay successfully sign up.. what do you want now ? "
             connection.send(string.encode(ENCODING))
-            username=string[1].split(":")[0]
+            username = string[1].split(":")[0]
 
-        if msg =="sign in":
-            string ="Enter your user pass like this : log in#user:pass"
+        if msg == "sign in":
+            string = "Enter your user pass like this : log in#user:pass"
             connection.send(string.encode(ENCODING))
 
         if "log in" in msg:
             string = str(msg).split("#")
-            username=string[1].split(":")[0]
+            username = string[1].split(":")[0]
 
-            flag=old_user(string[1].split(":")[0], string[1].split(":")[1])
+            flag = old_user(string[1].split(":")[0], string[1].split(":")[1])
             print("here")
-            if flag==True:
+            if flag == True:
                 string = "Successfully log in...what do you want now ?"
                 connection.send(string.encode(ENCODING))
 
@@ -79,81 +77,104 @@ def handle_client(connection, addrss):
         if "create_Repo" in msg:
             string = str(msg).split(":")
             print(username)
-            parent_dir=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username)
+            parent_dir = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username)
             create_dir(string[1], parent_dir)
-            #a file that store commits about this repo
-            repo_commit=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,string[1],"commits")
-            repo_commit+=".txt"
+            # a file that store commits about this repo
+            repo_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, string[1],
+                                       "commits")
+            repo_commit += ".txt"
             f = open(repo_commit, "x")
-            contributer=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,string[1],"contributer")
-            contributer+=".txt"
+            contributer = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, string[1],
+                                       "contributer")
+            contributer += ".txt"
             f = open(contributer, "x")
 
             with open(contributer, "w") as f:
                 f.write(username)
-
+                f.write("\n")
 
             string = "Repository Created Successfully what do you want now ? "
             connection.send(string.encode(ENCODING))
 
         if "subDir" in msg:
             string = str(msg).split("#")
-            Repo=string[1].split(":")[0]
-            subdir=string[1].split(":")[1]
+            Repo = string[1].split(":")[0]
+            subdir = string[1].split(":")[1]
             parent_dir = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, Repo)
-            create_dir(subdir,parent_dir)
+            create_dir(subdir, parent_dir)
             string = "sub directory in {} created..so now? ".format(Repo)
             connection.send(string.encode(ENCODING))
 
         if "want push" in msg:
-            string="Ok send your file name and its content"
+            string = "Ok send your file name and its content"
             connection.send(string.encode(ENCODING))
         if msg == "ok":
             string = "Ok I wait for you"
             connection.send(string.encode(ENCODING))
 
-
         if "Go to Push" in msg:
             string = str(msg).split("#")
             print(string)
-            splitted1=str(string[1]).split("%")
+            splitted1 = str(string[1]).split("%")
             print(splitted1)
-            file_name=splitted1[0]
-            splitted2=str(splitted1[1]).split("&")
+            file_name = splitted1[0]
+            splitted2 = str(splitted1[1]).split("&")
             print(splitted2)
-            Repo=splitted2[0]
-            splitted3=splitted2[1].split("$")
-            file_path1=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',username,Repo,file_name)
-            with open(file_path1, "w") as f:
-                f.write(splitted3[0])
+            Repo_user = str(splitted2[0]).split("@")
+            splitted3 = splitted2[1].split("$")
+            Repo_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', Repo_user[1], Repo_user[0])
+            contributers = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', Repo_user[1], Repo_user[0],
+                                        "contributer.txt")
+            file = open(contributers)
 
-            commit=splitted3[1]
-            commit_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',username,Repo,"commits.txt")
-            file_object = open(commit_path, 'a')
-            with open(commit_path, "w") as f:
-                f.write(commit)
+            if (username in file.read()):
+                print("you have access to push")
 
-            string="Push successfully! ...so now?!"
-            connection.send(string.encode(ENCODING))
+                file_path1 = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', Repo_user[1], Repo_user[0],
+                                          file_name)
+                with open(file_path1, "w") as f:
+                    f.write(splitted3[0])
+
+                commit = splitted3[1]
+                commit_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',Repo_user[1], Repo_user[0],
+                                           "commits.txt")
+
+                with open(commit_path, "w") as f:
+                    f.write(commit)
+
+                string = "Push successfully! ...so now?!"
+                connection.send(string.encode(ENCODING))
+            else:
+                string = "Sorry you dont have permission -.-"
+                connection.send(string.encode(ENCODING))
 
         if "want pull" in msg:
             string = "Ok send which Repo from Who?!"
             connection.send(string.encode(ENCODING))
 
         if "please pull" in msg:
-            splitt=str(msg).split("#")
-            which_user=splitt[1]
-            which_repo=splitt[2]
-            if os.path.exists(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',which_user,which_repo)):
-             repo_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',which_user,which_repo)
-             connection.send(str(repo_path).encode(ENCODING))
+            splitt = str(msg).split("#")
+            which_user = splitt[1]
+            which_repo = splitt[2]
+            if os.path.exists(
+                    os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', which_user, which_repo)):
+                repo_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', which_user,
+                                         which_repo)
+                connection.send(str(repo_path).encode(ENCODING))
             else:
-                string="what you want nothing found...try again"
+                string = "what you want nothing found...try again"
                 connection.send(str(string).encode(ENCODING))
 
-
-
-
+        if "add_contributer" in msg:
+            splitt=str(msg).split(":")
+            Repo=splitt[1]
+            cont_name=splitt[2]
+            contributer_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',username,Repo,"contributer.txt")
+            with open(contributer_path, "a") as f:
+                f.write(cont_name)
+                f.write("\n")
+            string="contributter added successfully ;)"
+            connection.send(str(string).encode(ENCODING))
 
 
 
@@ -177,16 +198,12 @@ def send_msg(server, msg):
     server.send(message)
 
 
-
-
-def new_user(userName,password):
-
+def new_user(userName, password):
     field_names = ['username', 'password']
 
-    dict = {'username':userName, 'password': password}
+    dict = {'username': userName, 'password': password}
 
     with open('user-pass.csv', 'a') as f_object:
-
         dictwriter_object = csv.DictWriter(f_object, fieldnames=field_names)
 
         dictwriter_object.writerow(dict)
@@ -194,20 +211,19 @@ def new_user(userName,password):
         f_object.close()
 
 
-
-
-def old_user(userName,password):
+def old_user(userName, password):
     with open('user-pass.csv', newline="") as file:
         readData = [row for row in csv.DictReader(file)]
 
     size = len(readData)
     for i in range(size):
         user = readData[i]['username']
-        pas  = readData[i]['password']
-        if userName == user and pas==password:
+        pas = readData[i]['password']
+        if userName == user and pas == password:
             return True
 
-
     return False
+
+
 if __name__ == '__main__':
     main()

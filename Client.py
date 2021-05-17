@@ -5,6 +5,11 @@ PORT = 7447
 MESSAGE_LEN_SIZE = 1024
 ENCODING = 'utf-8'
 NAME = ""
+# lets Go#username:password  sign up
+# log in#user:pass  sign in
+# create_Repo:RepoName
+# subDir#Repo:DirectoryInRepo
+#add_contributer:RepoName:username
 
 
 def main():
@@ -71,8 +76,11 @@ def main():
             big_string += str(file_name)
             big_string += '%'
             file_path_local = input("Enter file path local")
+            in_which_user=input("who is Repo for?...(notice you can push if you are contributer)")
             Repo = input("Enter which Repo")
             big_string += Repo
+            big_string+="@"
+            big_string+=in_which_user
 
             with open(f"{file_path_local}", "r") as f:
                 content = f.read()
@@ -94,6 +102,7 @@ def main():
 
         if "want pull" in Request:
             message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+            # print(message)
 
 
             pull_string = ""
@@ -129,6 +138,14 @@ def main():
                         with open(os.path.join(root1, file), "w") as f:
                             f.write(content)
                 print("pull successfully =))")
+
+        if "add_contributer" in Request:
+            message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+            if message:
+                print(message)
+
+
+
 
 
 
