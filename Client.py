@@ -5,11 +5,13 @@ PORT = 7447
 MESSAGE_LEN_SIZE = 1024
 ENCODING = 'utf-8'
 NAME = ""
+
+
 # lets Go#username:password  sign up
 # log in#user:pass  sign in
 # create_Repo:RepoName
 # subDir#Repo:DirectoryInRepo
-#add_contributer:RepoName:username
+# add_contributer:RepoName:username
 
 
 def main():
@@ -76,11 +78,11 @@ def main():
             big_string += str(file_name)
             big_string += '%'
             file_path_local = input("Enter file path local")
-            in_which_user=input("who is Repo for?...(notice you can push if you are contributer)")
+            in_which_user = input("who is Repo for?...(notice you can push if you are contributer)")
             Repo = input("Enter which Repo")
             big_string += Repo
-            big_string+="@"
-            big_string+=in_which_user
+            big_string += "@"
+            big_string += in_which_user
 
             with open(f"{file_path_local}", "r") as f:
                 content = f.read()
@@ -104,7 +106,6 @@ def main():
             message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
             # print(message)
 
-
             pull_string = ""
             pull_string += "please pull#"
             which_user = input("Enter which user you  want?")
@@ -114,7 +115,7 @@ def main():
             pull_string += str(which_repo)
             send_msg(s, pull_string)
             Repo_address = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-            if  "nothing found" in Repo_address:
+            if "nothing found" in Repo_address:
                 print(Repo_address)
 
             else:
@@ -148,22 +149,28 @@ def main():
             message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
             if message:
                 print(message)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+            file_name = input("Enter file name you want download")
+            from_who = input("Enter user you want download from")
+            Repo = input("Enter which Repo?")
+            path = input("Enter path in Repo that file exist in")
+            download = "Go to download"
+            download += ":"
+            download += str(file_name)
+            download += ":"
+            download += from_who
+            download += ":"
+            download += Repo
+            download += ":"
+            download += path
+            send_msg(s, download)
+            msg = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+            if "nothing found" in msg:
+                print(msg)
+            else:
+                file1 = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients)", NAME, file_name), "x")
+                with open(file1, "a") as f:
+                    f.write(msg)
+                print("download successfully ;)")
 
 
 def send_msg(client, msg):

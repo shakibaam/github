@@ -196,7 +196,26 @@ def handle_client(connection, addrss):
                 f.write("\n")
             string="contributter added successfully ;)"
             connection.send(str(string).encode(ENCODING))
-        
+
+        if "want download" in msg:
+            string="Ok send information above..."
+            connection.send(str(string).encode(ENCODING))
+
+        if "Go to download" in msg:
+            splitt=str(msg).split(":")
+            file_name=splitt[1]
+            usr=splitt[2]
+            Repo_name=splitt[3]
+            file_path=splitt[4]
+            full_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',usr,Repo_name,file_path,file_name)
+            if os.path.exists(full_path):
+                with open(f"{os.path.join(full_path)}", "r") as f:
+                    content = f.read()
+
+                connection.send(str(content).encode(ENCODING))
+            else:
+                string = "what you want nothing found...try again"
+                connection.send(str(string).encode(ENCODING))
 
 
 
