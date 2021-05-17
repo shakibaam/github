@@ -124,8 +124,22 @@ def handle_client(connection, addrss):
             with open(commit_path, "w") as f:
                 f.write(commit)
 
-            string="Push successfully!"
+            string="Push successfully! ...so now?!"
             connection.send(string.encode(ENCODING))
+
+        if "want pull" in msg:
+            string = "Ok send which Repo from Who?!"
+            connection.send(string.encode(ENCODING))
+
+        if "please pull" in msg:
+            splitt=str(msg).split("#")
+            which_user=splitt[1]
+            which_repo=splitt[2]
+            repo_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',which_user,which_repo)
+            connection.send(str(repo_path).encode(ENCODING))
+
+
+
 
 
 

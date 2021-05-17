@@ -90,6 +90,50 @@ def main():
          if message:
              print(message)
 
+     if "want pull" in Request:
+         message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+         if message:
+             print(message)
+
+         pull_string=""
+         pull_string+="please pull#"
+         which_user=input("Enter which user you  want?")
+         which_repo=input("Enter which repo from {}".format(which_user))
+         pull_string+=str(which_user)
+         pull_string+="#"
+         pull_string+=str(which_repo)
+         send_msg(s, pull_string)
+         Repo_address = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+
+         if Repo_address:
+             print(Repo_address)
+             create_dir(which_repo,os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME))
+             pull_path=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,which_repo)
+             dirs=[]
+             for filename in os.listdir(Repo_address):
+                 f = os.path.join(Repo_address, filename)
+                 if os.path.isdir(f):
+                     if len(os.listdir(f))==0:
+                         create_dir(file_name,pull_path)
+                     else:
+                       dirs.append(f)
+                 elif os.path.isfile(f):
+                     with open(f"{f}", "r") as file:
+                         content = file.read()
+
+                     with open(os.path.join(pull_path,file_name), "w") as file:
+                         file.write(content)
+
+
+
+
+
+
+
+
+
+         else:print("Nothing found...Try Again")
+
 
 
 
@@ -116,6 +160,9 @@ def create_dir(dir_name, paren_path):
 
         os.mkdir(path)
         print("Directory '% s' created" % directory)
+
+
+
 
 
 
