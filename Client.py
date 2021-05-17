@@ -109,20 +109,23 @@ def main():
              print(Repo_address)
              create_dir(which_repo,os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME))
              pull_path=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,which_repo)
-             dirs=[]
-             for filename in os.listdir(Repo_address):
-                 f = os.path.join(Repo_address, filename)
-                 if os.path.isdir(f):
-                     if len(os.listdir(f))==0:
-                         create_dir(file_name,pull_path)
-                     else:
-                       dirs.append(f)
-                 elif os.path.isfile(f):
-                     with open(f"{f}", "r") as file:
-                         content = file.read()
 
-                     with open(os.path.join(pull_path,file_name), "w") as file:
-                         file.write(content)
+
+             for root, subdirectories, files in os.walk(Repo_address):
+                 root1=root.replace(Repo_address,os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,which_repo))
+                 for subdirectory in subdirectories:
+                     print(os.path.join(root1, subdirectory))
+                     create_dir(subdirectory,root1)
+                 for file in files:
+                     print(os.path.join(root1, file))
+
+                     with open(f"{os.path.join(root, file)}", "r") as f:
+                         content = f.read()
+
+                     with open(os.path.join(root1, file), "w") as f:
+                        f.write(content)
+                 print("pull successfully =))")
+
 
 
 
