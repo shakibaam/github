@@ -51,6 +51,9 @@ def handle_client(connection, addrss):
             parent_dir = "C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase"
             new_user(string[1].split(":")[0], string[1].split(":")[1])
             create_dir(string[1].split(":")[0], parent_dir)
+            #create file for all commits of this user
+            all_commit_path=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",string[1].split(":")[0],"all_commit.txt")
+            f = open(all_commit_path, "x")
             string = "yay successfully sign up.. what do you want now ? "
             connection.send(string.encode(ENCODING))
             username = string[1].split(":")[0]
@@ -135,12 +138,30 @@ def handle_client(connection, addrss):
                 with open(file_path1, "w") as f:
                     f.write(splitted3[0])
 
-                commit = splitted3[1]
+                commit=str(Repo_user[1])
+                commit+=":"
+                commit+= splitted3[1]
+
                 commit_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',Repo_user[1], Repo_user[0],
                                            "commits.txt")
 
-                with open(commit_path, "w") as f:
+                with open(commit_path, "a") as f:
                     f.write(commit)
+                    f.write("\n")
+
+                commit=str(username)
+                commit+=":"
+                commit+=str(splitted3[1])
+                commit+="  "
+                commit+="for "
+                commit+=str(Repo_user[0])
+                commit+=" of "
+                commit+=str(Repo_user[1])
+
+                all_commit_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',Repo_user[1],"all_commit.txt")
+                with open(all_commit_path, "a") as f:
+                    f.write(commit)
+                    f.write("\n")
 
                 string = "Push successfully! ...so now?!"
                 connection.send(string.encode(ENCODING))
@@ -175,6 +196,7 @@ def handle_client(connection, addrss):
                 f.write("\n")
             string="contributter added successfully ;)"
             connection.send(str(string).encode(ENCODING))
+        
 
 
 

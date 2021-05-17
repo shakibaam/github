@@ -144,6 +144,12 @@ def main():
             if message:
                 print(message)
 
+        if "want download" in Request:
+            message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+            if message:
+                print(message)
+
+
 
 
 
