@@ -79,8 +79,11 @@ def handle_client(connection, addrss):
         if "create_Repo" in msg:
             string = str(msg).split(":")
             print(username)
-            parent_dir=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,)
+            parent_dir=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username)
             create_dir(string[1], parent_dir)
+            #a file that store commits about this repo
+            repo_commit=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,string[1],"commits")
+            f = open(repo_commit, "x")
             string = "Repository Created Successfully what do you want now ? "
             connection.send(string.encode(ENCODING))
 
@@ -92,6 +95,39 @@ def handle_client(connection, addrss):
             create_dir(subdir,parent_dir)
             string = "sub directory in {} created..so now? ".format(Repo)
             connection.send(string.encode(ENCODING))
+
+        if "want push" in msg:
+            string="Ok send your file name and its content"
+            connection.send(string.encode(ENCODING))
+        if msg == "ok":
+            string = "Ok I wait for you"
+            connection.send(string.encode(ENCODING))
+
+
+        if "Go to Push" in msg:
+            string = str(msg).split("#")
+            print(string)
+            splitted1=str(string[1]).split("%")
+            print(splitted1)
+            file_name=splitted1[0]
+            splitted2=str(splitted1[1]).split("&")
+            print(splitted2)
+            Repo=splitted2[0]
+            splitted3=splitted2[1].split("$")
+            file_path1=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',username,Repo,file_name)
+            with open(file_path1, "w") as f:
+                f.write(splitted3[0])
+
+            commit=splitted3[1]
+            commit_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',username,Repo,"commits.txt")
+            file_object = open(commit_path, 'a')
+            with open(commit_path, "w") as f:
+                f.write(commit)
+
+            string="Push successfully!"
+            connection.send(string.encode(ENCODING))
+
+
 
 
     connection.close()

@@ -1,3 +1,4 @@
+import os
 import socket
 PORT=7447
 MESSAGE_LEN_SIZE=1024
@@ -7,6 +8,7 @@ NAME=""
 def main():
     global NAME
     NAME=input("we need to know who are you?")
+    create_dir(NAME,'C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients')
     addrss = socket.gethostbyname(socket.gethostname())
     Host_info = ("192.168.131.1", PORT)
 
@@ -67,8 +69,8 @@ def main():
          big_string += str(file_name)
          big_string += '%'
          file_path_local = input("Enter file path local")
-         file_path_server = input("Enter file path server")
-         big_string += file_path_server
+         Repo = input("Enter which Repo")
+         big_string += Repo
 
          with open(f"{file_path_local}", "r") as f:
              content = f.read()
@@ -94,6 +96,7 @@ def main():
 
 
 
+
 def send_msg(client,msg):
 
      message = msg.encode(ENCODING)
@@ -106,6 +109,13 @@ def send_msg(client,msg):
 
 
 
+def create_dir(dir_name, paren_path):
+    directory = dir_name
+    path = os.path.join(paren_path, directory)
+    if  not os.path.exists(path):
+
+        os.mkdir(path)
+        print("Directory '% s' created" % directory)
 
 
 
