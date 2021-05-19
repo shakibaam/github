@@ -11,7 +11,7 @@ NAME = ""
 # lets Go#username:password  sign up
 # log in#user:pass  sign in
 # create_Repo:RepoName
-# subDir#Repo:DirectoryInRepo
+# subDir#Repo:nameofsubdir:forwho:pathtosave
 # add_contributer:RepoName:username
 
 

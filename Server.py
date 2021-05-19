@@ -28,6 +28,7 @@ def start(server):
 def handle_client(connection, addrss):
     print("new connection from {}".format(addrss))
     string = "Hello Welcome To github..  :)\n sign in or sign up?"
+
     username = ""
     connection.send(string.encode(ENCODING))
     connected = True
@@ -52,7 +53,9 @@ def handle_client(connection, addrss):
             all_commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",
                                            string[1].split(":")[0], "all_commit.txt")
             f = open(all_commit_path, "x")
-            string = "yay successfully sign up.. what do you want now ? "
+            string = "yay successfully sign up.. what do you want now ? \n"
+            string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username\n"
+            string += "want pull\nwant push\nclient commit\disconnect"
             connection.send(string.encode(ENCODING))
             username = string[1].split(":")[0]
 
@@ -67,7 +70,9 @@ def handle_client(connection, addrss):
             flag = old_user(string[1].split(":")[0], string[1].split(":")[1])
             print("here")
             if flag == True:
-                string = "Successfully log in...what do you want now ?"
+                string = "Successfully log in...what do you want now ?\n"
+                string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username\n"
+                string += "want pull\nwant push\nclient commit"
                 connection.send(string.encode(ENCODING))
 
 
@@ -98,13 +103,23 @@ def handle_client(connection, addrss):
             connection.send(string.encode(ENCODING))
 
         if "subDir" in msg:
+
             string = str(msg).split("#")
             Repo = string[1].split(":")[0]
             subdir = string[1].split(":")[1]
-            parent_dir = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, Repo)
-            create_dir(subdir, parent_dir)
-            string = "sub directory in {} created..so now? ".format(Repo)
-            connection.send(string.encode(ENCODING))
+            for_who = string[1].split(":")[2]
+            path = string[1].split(":")[3]
+            contributers = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo,
+                                        "contributer.txt")
+            file = open(contributers)
+            if (username in file.read()):
+                parent_dir = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",path)
+                create_dir(subdir, parent_dir)
+                string = "sub directory in {} created..so now? ".format(Repo)
+                connection.send(string.encode(ENCODING))
+            else:
+                string = "you dont have permission to create subdir -.-"
+                connection.send(string.encode(ENCODING))
 
         # if "want push" in msg:
         #     string = "Ok send your file name and its content"
@@ -124,7 +139,7 @@ def handle_client(connection, addrss):
             file = open(contributers)
             if (username in file.read()):
                 print("you have access to push")
-                content=string[4]
+                content = string[4]
                 # read_file = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", username, file_path)
                 # with open(f"{read_file}", "r") as f:
                 #     content = f.read()
@@ -140,7 +155,6 @@ def handle_client(connection, addrss):
                 string = "Sorry you dont have permission -.-"
                 connection.send(string.encode(ENCODING))
 
-
         if "append_commit" in msg:
             string = str(msg).split("#")
             commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, string[2],
@@ -150,7 +164,8 @@ def handle_client(connection, addrss):
             file_object.write(string[1])
 
             file_object.close()
-            all_commit_path=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,"all_commit.txt")
+            all_commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username,
+                                           "all_commit.txt")
             file_object = open(all_commit_path, 'a')
 
             file_object.write(string[1])
@@ -158,7 +173,6 @@ def handle_client(connection, addrss):
             file_object.close()
             string = "commits add to server successfully"
             connection.send(string.encode(ENCODING))
-
 
         if "want pull" in msg:
             string = "Ok send which Repo from Who?!"
