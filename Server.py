@@ -124,9 +124,10 @@ def handle_client(connection, addrss):
             file = open(contributers)
             if (username in file.read()):
                 print("you have access to push")
-                read_file = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", username, file_path)
-                with open(f"{read_file}", "r") as f:
-                    content = f.read()
+                content=string[4]
+                # read_file = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", username, file_path)
+                # with open(f"{read_file}", "r") as f:
+                #     content = f.read()
 
                 write_file = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', username, file_path)
 
@@ -138,57 +139,7 @@ def handle_client(connection, addrss):
             else:
                 string = "Sorry you dont have permission -.-"
                 connection.send(string.encode(ENCODING))
-        #     print(string)
-        #     splitted1 = str(string[1]).split("%")
-        #     print(splitted1)
-        #     file_name = splitted1[0]
-        #     splitted2 = str(splitted1[1]).split("&")
-        #     print(splitted2)
-        #     Repo_user = str(splitted2[0]).split("@")
-        #     splitted3 = splitted2[1].split("$")
-        #     Repo_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', Repo_user[1], Repo_user[0])
-        #     contributers = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', Repo_user[1], Repo_user[0],
-        #                                 "contributer.txt")
-        #     file = open(contributers)
-        #
-        #     if (username in file.read()):
-        #         print("you have access to push")
-        #
-        #         file_path1 = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', Repo_user[1], Repo_user[0],
-        #                                   file_name)
-        #         with open(file_path1, "w") as f:
-        #             f.write(splitted3[0])
-        #
-        #         commit=str(Repo_user[1])
-        #         commit+=":"
-        #         commit+= splitted3[1]
-        #
-        #         commit_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',Repo_user[1], Repo_user[0],
-        #                                    "commits.txt")
-        #
-        #         with open(commit_path, "a") as f:
-        #             f.write(commit)
-        #             f.write("\n")
-        #
-        #         commit=str(username)
-        #         commit+=":"
-        #         commit+=str(splitted3[1])
-        #         commit+="  "
-        #         commit+="for "
-        #         commit+=str(Repo_user[0])
-        #         commit+=" of "
-        #         commit+=str(Repo_user[1])
-        #
-        #         all_commit_path=os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase',Repo_user[1],"all_commit.txt")
-        #         with open(all_commit_path, "a") as f:
-        #             f.write(commit)
-        #             f.write("\n")
-        #
-        #         string = "Push successfully! ...so now?!"
-        #         connection.send(string.encode(ENCODING))
-        #     else:
-        #         string = "Sorry you dont have permission -.-"
-        #         connection.send(string.encode(ENCODING))
+
 
         if "append_commit" in msg:
             string = str(msg).split("#")

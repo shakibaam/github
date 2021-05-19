@@ -95,6 +95,9 @@ def main():
                             changed_file.append(temp[3])
 
                 for file in changed_file:
+                    read=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,file)
+                    with open(f"{read}", "r") as f:
+                        content = f.read()
                     big_string = ""
                     big_string += "Go to Push#"
                     big_string+=str(file)
@@ -102,6 +105,8 @@ def main():
                     big_string+=Repo
                     big_string+="#"
                     big_string+=for_who
+                    big_string+="#"
+                    big_string+=str(content)
                     send_msg(s, big_string)
 
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
@@ -265,13 +270,13 @@ def main():
             client_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo,
                                          "client_commit.txt")
             all_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, "all_commit.txt")
-            with open(client_commit, "w") as f:
+            with open(client_commit, "a") as f:
                 f.write(string)
                 f.write("\n")
                 f.write("----------")
                 f.write("\n")
                 f.close()
-            with open(all_commit, "w") as f:
+            with open(all_commit, "a") as f:
                 f.write(string)
                 f.write("\n")
                 f.write("----------")
