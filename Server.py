@@ -52,12 +52,15 @@ def handle_client(connection, addrss):
             # create file for all commits of this user
             all_commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",
                                            string[1].split(":")[0], "all_commit.txt")
+            username = string[1].split(":")[0]
             f = open(all_commit_path, "x")
+            f.close()
             string = "yay successfully sign up.. what do you want now ? \n"
-            string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username\n"
+            string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
             string += "want pull\nwant push\nclient commit\disconnect"
             connection.send(string.encode(ENCODING))
-            username = string[1].split(":")[0]
+
+            print(";;;;"+str(username))
 
         if msg == "sign in":
             string = "Enter your user pass like this : log in#user:pass"
@@ -71,7 +74,7 @@ def handle_client(connection, addrss):
             print("here")
             if flag == True:
                 string = "Successfully log in...what do you want now ?\n"
-                string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username\n"
+                string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
                 string += "want pull\nwant push\nclient commit"
                 connection.send(string.encode(ENCODING))
 
@@ -90,14 +93,17 @@ def handle_client(connection, addrss):
                                        "commits")
             repo_commit += ".txt"
             f = open(repo_commit, "x")
+            f.close()
             contributer = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, string[1],
                                        "contributer")
             contributer += ".txt"
             f = open(contributer, "x")
+            f.close()
 
             with open(contributer, "w") as f:
                 f.write(username)
                 f.write("\n")
+                f.close()
 
             string = "Repository Created Successfully what do you want now ? "
             connection.send(string.encode(ENCODING))
@@ -120,6 +126,7 @@ def handle_client(connection, addrss):
             else:
                 string = "you dont have permission to create subdir -.-"
                 connection.send(string.encode(ENCODING))
+            file.close()
 
         # if "want push" in msg:
         #     string = "Ok send your file name and its content"
@@ -148,12 +155,14 @@ def handle_client(connection, addrss):
 
                 with open(write_file, "w") as f:
                     f.write(content)
+                    f.close()
                 string = "push successfully"
                 connection.send(string.encode(ENCODING))
 
             else:
                 string = "Sorry you dont have permission -.-"
                 connection.send(string.encode(ENCODING))
+            file.close()
 
         if "append_commit" in msg:
             string = str(msg).split("#")
@@ -173,6 +182,7 @@ def handle_client(connection, addrss):
             file_object.close()
             string = "commits add to server successfully"
             connection.send(string.encode(ENCODING))
+            file_object.close()
 
         if "want pull" in msg:
             string = "Ok send which Repo from Who?!"
@@ -195,13 +205,24 @@ def handle_client(connection, addrss):
             splitt = str(msg).split(":")
             Repo = splitt[1]
             cont_name = splitt[2]
-            contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', username, Repo,
+            contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', splitt[3], Repo,
                                             "contributer.txt")
-            with open(contributer_path, "a") as f:
-                f.write(cont_name)
-                f.write("\n")
-            string = "contributter added successfully ;)"
-            connection.send(str(string).encode(ENCODING))
+            file=open(contributer_path)
+            if username in file.read():
+                file.close()
+
+                with open(contributer_path, "a") as f:
+                    f.write(cont_name)
+                    f.write("\n")
+                    f.close()
+
+                string = "contributter added successfully ;)"
+                connection.send(str(string).encode(ENCODING))
+            else:
+                string = "you dont have access to add contributer -.-"
+                connection.send(str(string).encode(ENCODING))
+
+
 
         if "want download" in msg:
             string = "Ok send information above..."
@@ -218,6 +239,7 @@ def handle_client(connection, addrss):
             if os.path.exists(full_path):
                 with open(f"{os.path.join(full_path)}", "r") as f:
                     content = f.read()
+                    f.close()
 
                 connection.send(str(content).encode(ENCODING))
             else:

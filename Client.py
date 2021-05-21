@@ -12,7 +12,7 @@ NAME = ""
 # log in#user:pass  sign in
 # create_Repo:RepoName
 # subDir#Repo:nameofsubdir:forwho:pathtosave
-# add_contributer:RepoName:username
+# add_contributer:RepoName:username_toadd:Repofor
 
 
 def main():
@@ -42,6 +42,7 @@ def main():
             if Request == "sign up":
                 f = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,
                                       "all_commit.txt"), "x")
+                f.close()
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
                 if message:
                     print(message)
@@ -65,6 +66,15 @@ def main():
                 Repo_name=str(Request).split(":")
                 create_dir(Repo_name[1],os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients" , NAME))
                 f=open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients" , NAME,Repo_name[1],"client_commit.txt"),"x")
+                f.close()
+                f = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo_name[1],
+                                      "contributers.txt"), "x")
+                f.close()
+                with open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo_name[1],
+                                      "contributers.txt"), "a") as f:
+                    f.write(NAME)
+                    f.write("\n")
+                    f.close()
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
                 if message:
                     print(message)
@@ -98,6 +108,7 @@ def main():
                     read=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,file)
                     with open(f"{read}", "r") as f:
                         content = f.read()
+                        f.close()
                     big_string = ""
                     big_string += "Go to Push#"
                     big_string+=str(file)
@@ -223,13 +234,25 @@ def main():
 
                             with open(f"{os.path.join(root, file)}", "r") as f:
                                 content = f.read()
+                                f.close()
                             if os.path.basename(os.path.join(root1, file)) != "contributer.txt":
                                 with open(os.path.join(root1, file), "w") as f:
 
                                      f.write(content)
+                                     f.close()
                     print("pull successfully =))")
 
             if "add_contributer" in Request:
+                splitt=str(Request).split(":")
+                contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients', splitt[3],splitt[1],"contributers.txt")
+                file = open(contributer_path)
+                if NAME in file.read():
+                    file.close()
+
+                    with open(contributer_path, "a") as f:
+                        f.write(splitt[2])
+                        f.write("\n")
+                        f.close()
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
                 if message:
                     print(message)
@@ -259,6 +282,7 @@ def main():
                     file1 = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients)", NAME, file_name), "x")
                     with open(file1, "a") as f:
                         f.write(msg)
+                        f.close()
                     print("download successfully ;)")
 
         else:
