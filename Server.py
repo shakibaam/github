@@ -234,8 +234,7 @@ def handle_client(connection, addrss):
             usr = splitt[2]
             Repo_name = splitt[3]
             file_path = splitt[4]
-            full_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', usr, Repo_name,
-                                     file_path, file_name)
+            full_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', usr,file_path)
             if os.path.exists(full_path):
                 with open(f"{os.path.join(full_path)}", "r") as f:
                     content = f.read()

@@ -282,7 +282,8 @@ def main():
                 if "nothing found" in msg:
                     print(msg)
                 else:
-                    file1 = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients)", NAME, file_name), "x")
+                    file1 = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, file_name)
+                    # file1.close()
                     with open(file1, "a") as f:
                         f.write(msg)
                         f.close()
