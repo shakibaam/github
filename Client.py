@@ -223,9 +223,10 @@ def main():
 
                             with open(f"{os.path.join(root, file)}", "r") as f:
                                 content = f.read()
+                            if os.path.basename(os.path.join(root1, file)) != "contributer.txt":
+                                with open(os.path.join(root1, file), "w") as f:
 
-                            with open(os.path.join(root1, file), "w") as f:
-                                f.write(content)
+                                     f.write(content)
                     print("pull successfully =))")
 
             if "add_contributer" in Request:

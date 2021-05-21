@@ -182,8 +182,8 @@ def handle_client(connection, addrss):
             splitt = str(msg).split("#")
             which_user = splitt[1]
             which_repo = splitt[2]
-            if os.path.exists(
-                    os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', which_user, which_repo)):
+            print(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', which_user, which_repo))
+            if os.path.exists(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', which_user, which_repo)):
                 repo_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', which_user,
                                          which_repo)
                 connection.send(str(repo_path).encode(ENCODING))
