@@ -57,7 +57,7 @@ def handle_client(connection, addrss):
             f.close()
             string = "yay successfully sign up.. what do you want now ? \n"
             string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
-            string += "want pull\nwant push\nclient commit\disconnect"
+            string += "want pull\nwant push:Repo:Repofor\nwant download\nclient commit\disconnect"
             connection.send(string.encode(ENCODING))
 
             print(";;;;"+str(username))
@@ -75,7 +75,7 @@ def handle_client(connection, addrss):
             if flag == True:
                 string = "Successfully log in...what do you want now ?\n"
                 string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
-                string += "want pull\nwant push\nclient commit"
+                string += "want pull\nwant push:Repo:Repofor\nwant download\nclient commit"
                 connection.send(string.encode(ENCODING))
 
 
@@ -101,7 +101,8 @@ def handle_client(connection, addrss):
             f.close()
 
             with open(contributer, "w") as f:
-                f.write(username)
+                string="owner:"+str(username)
+                f.write(string)
                 f.write("\n")
                 f.close()
 
@@ -128,9 +129,30 @@ def handle_client(connection, addrss):
                 connection.send(string.encode(ENCODING))
             file.close()
 
-        # if "want push" in msg:
-        #     string = "Ok send your file name and its content"
-        #     connection.send(string.encode(ENCODING))
+        if "want push" in msg:
+            string = str(msg).split(":")
+            print(string)
+            Repo=string[1]
+            for_who=string[2]
+            if os.path.exists(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo)):
+                contributers = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo,
+                                            "contributer.txt")
+                file = open(contributers)
+                if (username in file.read()):
+                    string = "You have access to push ;)"
+                    connection.send(string.encode(ENCODING))
+
+                else:
+                    string = "Sorry you dont have permission -.- you can try push in your git server if you want"
+                    connection.send(string.encode(ENCODING))
+            else:
+                string="this Repo doesnt exist...first create it then try to push"
+                connection.send(string.encode(ENCODING))
+
+
+
+
+
         if msg == "ok":
             string = "Ok I wait for you"
             connection.send(string.encode(ENCODING))
@@ -145,13 +167,15 @@ def handle_client(connection, addrss):
                                         "contributer.txt")
             file = open(contributers)
             if (username in file.read()):
-                print("you have access to push")
+                string = "You have access to push ;)"
+                connection.send(string.encode(ENCODING))
+
                 content = string[4]
                 # read_file = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", username, file_path)
                 # with open(f"{read_file}", "r") as f:
                 #     content = f.read()
 
-                write_file = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', username, file_path)
+                write_file = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, file_path)
 
                 with open(write_file, "w") as f:
                     f.write(content)
@@ -160,13 +184,13 @@ def handle_client(connection, addrss):
                 connection.send(string.encode(ENCODING))
 
             else:
-                string = "Sorry you dont have permission -.-"
+                string = "Sorry you dont have permission -.- you can try push in your git server if you want"
                 connection.send(string.encode(ENCODING))
             file.close()
 
         if "append_commit" in msg:
             string = str(msg).split("#")
-            commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, string[2],
+            commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", for_who, string[2],
                                        "commits.txt")
             file_object = open(commit_path, 'a')
 
@@ -212,7 +236,8 @@ def handle_client(connection, addrss):
                 file.close()
 
                 with open(contributer_path, "a") as f:
-                    f.write(cont_name)
+                    string="contributer:"+str(cont_name)
+                    f.write(string)
                     f.write("\n")
                     f.close()
 

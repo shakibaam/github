@@ -13,6 +13,7 @@ NAME = ""
 # create_Repo:RepoName
 # subDir#Repo:nameofsubdir:forwho:pathtosave
 # add_contributer:RepoName:username_toadd:Repofor
+# want push:Reponame:usernameRepofor
 
 
 def main():
@@ -40,7 +41,7 @@ def main():
                 exit()
 
             if Request == "sign up":
-                f = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,
+                f = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
                                       "all_commit.txt"), "x")
                 f.close()
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
@@ -63,15 +64,16 @@ def main():
                     print(message)
 
             if "create_Repo" in Request:
-                Repo_name=str(Request).split(":")
-                create_dir(Repo_name[1],os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients" , NAME))
-                f=open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients" , NAME,Repo_name[1],"client_commit.txt"),"x")
+                Repo_name = str(Request).split(":")
+                create_dir(Repo_name[1], os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
+                f = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo_name[1],
+                                      "client_commit.txt"), "x")
                 f.close()
                 f = open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo_name[1],
                                       "contributers.txt"), "x")
                 f.close()
                 with open(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo_name[1],
-                                      "contributers.txt"), "a") as f:
+                                       "contributers.txt"), "a") as f:
                     f.write(NAME)
                     f.write("\n")
                     f.close()
@@ -85,120 +87,74 @@ def main():
                     print(message)
 
             if "want push" in Request:
-                Repo=input("Enter which Repo you want push")
-                for_who=input("Enter the name of person that Repo for")
-                changed_file=[]
-                commit_path=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,Repo,"client_commit.txt")
-                if os.stat(commit_path).st_size != 0:
-                    with open(f"{commit_path}", "r") as f:
-                        content = f.read()
-                        f.close()
-                    commits=str(content).split("----------")
 
-                    for i in commits:
-                        temp=str(i).split("&&")
-                        if temp[0] != "\n":
-                            print(temp)
-                            str(temp[4]).replace("\n","")
+                message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                string=str(Request).split(":")
+                Repo=string[1]
+                for_who=string[2]
+                if "You have access" in message:
+                    print(message)
+                    changed_file = []
+                    commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo,
+                                               "client_commit.txt")
 
-                            if not temp[3]in changed_file:
-
-                                changed_file.append(temp[3])
-
-                    for file in changed_file:
-                        read=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,file)
-                        with open(f"{read}", "r") as f:
+                    if os.stat(commit_path).st_size != 0:
+                        with open(f"{commit_path}", "r") as f:
                             content = f.read()
                             f.close()
-                        big_string = ""
-                        big_string += "Go to Push#"
-                        big_string+=str(file)
-                        big_string+="#"
-                        big_string+=Repo
-                        big_string+="#"
-                        big_string+=for_who
-                        big_string+="#"
-                        big_string+=str(content)
-                        send_msg(s, big_string)
+                        commits = str(content).split("----------")
 
-                    message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-                    if message:
-                        print(message)
-                    # sending comments to server
-                    with open(f"{commit_path}", "r") as f:
-                        content = f.read()
-                        f.close()
-                    string="append_commit"
-                    string+="#"
-                    string+=str(content)
-                    string+="#"
-                    string+=Repo
-                    send_msg(s, string)
-                    message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-                    if message:
-                        print(message)
-                    a_file = open(commit_path, "w")
-                    a_file.truncate()
-                    a_file.close()
-                else:
-                    print("you dont have any commit...first commit something then push")
+                        for i in commits:
+                            temp = str(i).split("&&")
+                            if temp[0] != "\n":
+                                print(temp)
+                                str(temp[4]).replace("\n", "")
 
+                                if not temp[3] in changed_file:
+                                    changed_file.append(temp[3])
 
+                        for file in changed_file:
+                            read = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, file)
+                            with open(f"{read}", "r") as f:
+                                content = f.read()
+                                f.close()
+                            big_string = ""
+                            big_string += "Go to Push#"
+                            big_string += str(file)
+                            big_string += "#"
+                            big_string += Repo
+                            big_string += "#"
+                            big_string += for_who
+                            big_string += "#"
+                            big_string += str(content)
+                            send_msg(s, big_string)
 
+                        message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                        if message:
+                            print(message)
+                        # sending comments to server
+                        with open(f"{commit_path}", "r") as f:
+                            content = f.read()
+                            f.close()
+                        string = "append_commit"
+                        string += "#"
+                        string += str(content)
+                        string += "#"
+                        string += Repo
+                        send_msg(s, string)
+                        message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                        if message:
+                            print(message)
+                        a_file = open(commit_path, "w")
+                        a_file.truncate()
+                        a_file.close()
+                    else:
+                        print("you dont have any commit...first commit something then push")
+                elif "you dont have permission" in message:
+                    print(message)
+                elif "this Repo doesnt exist" in message:
+                    print(message)
 
-
-                # push_commit=input("Enter push commit")
-                # client_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo,
-                #                              "client_commit.txt")
-                # all_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, "all_commit.txt")
-                # now = datetime.now()
-                # string = str(NAME) + "&&" + str(push_commit) + "&&" + str(Repo) + "&&" + str(target_file) + "&&" + str(now)
-                # with open(client_commit, "w") as f:
-                #     f.write(push_commit)
-                #     f.write("\n")
-                #     f.write("----------")
-                #     f.write("\n")
-                #     f.close()
-                # with open(all_commit, "w") as f:
-                #     f.write(push_commit)
-                #     f.write("\n")
-                #     f.write("----------")
-                #     f.write("\n")
-                #     f.close()
-
-
-
-
-
-                # message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-                # if message:
-                #     print(message)
-                #
-                # big_string = ""
-                # file_name = input("Enter file name")
-                # big_string += "Go to Push#"
-                # big_string += str(file_name)
-                # big_string += '%'
-                # file_path_local = input("Enter file path local")
-                # in_which_user = input("who is Repo for?...(notice you can push if you are contributer)")
-                # Repo = input("Enter which Repo")
-                # big_string += Repo
-                # big_string += "@"
-                # big_string += in_which_user
-                #
-                # with open(f"{file_path_local}", "r") as f:
-                #     content = f.read()
-                #
-                # big_string += "&"
-                # big_string += str(content)
-                # print(big_string)
-                # big_string += "$"
-                # commit = input("Enter commit message")
-                # big_string += commit
-                # send_msg(s, big_string)
-                # message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-                # if message:
-                #     print(message)
             if Request == "ok":
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
                 if message:
@@ -238,16 +194,22 @@ def main():
                             with open(f"{os.path.join(root, file)}", "r") as f:
                                 content = f.read()
                                 f.close()
-                            if os.path.basename(os.path.join(root1, file)) != "contributer.txt":
-                                with open(os.path.join(root1, file), "w") as f:
+                            if  not os.path.basename(os.path.join(root1, file)) == "contributer.txt":
+                                if os.path.basename(os.path.join(root1, file)) == "commits.txt":
+                                    with open(os.path.join(root1, "client_commit.txt"), "w") as f:
+                                        f.write(content)
+                                        f.close()
+                                else:
+                                    with open(os.path.join(root1, file), "w") as f:
+                                        f.write(content)
+                                        f.close()
 
-                                     f.write(content)
-                                     f.close()
                     print("pull successfully =))")
 
             if "add_contributer" in Request:
-                splitt=str(Request).split(":")
-                contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients', splitt[3],splitt[1],"contributers.txt")
+                splitt = str(Request).split(":")
+                contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients', splitt[3],
+                                                splitt[1], "contributers.txt")
                 file = open(contributer_path)
                 if NAME in file.read():
                     file.close()
@@ -291,36 +253,53 @@ def main():
 
         else:
 
-            Repo=input("Enter Repo name")
-            for_who=input("Enter Repo for ?")
-            commit=input("Enter your commit message")
-            target_file=input("Enter address of file that you change")
+            Repo = input("Enter Repo name")
+            for_who = input("Enter Repo for ?")
+            commit = input("Enter your commit message")
+            target_file = input("Enter address of file that you change")
             now = datetime.now()
-            string=str(NAME)+"&&"+str(commit)+"&&"+str(Repo)+"&&"+str(target_file)+"&&"+str(now)
+            string = str(NAME) + "&&" + str(commit) + "&&" + str(Repo) + "&&" + str(target_file) + "&&" + str(now)
             client_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo,
                                          "client_commit.txt")
             all_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, "all_commit.txt")
-            contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients',for_who , Repo,"contributers.txt")
-            file = open(contributer_path)
-            if NAME in file.read():
-                file.close()
-                with open(client_commit, "a") as f:
-                    f.write(string)
-                    f.write("\n")
-                    f.write("----------")
-                    f.write("\n")
-                    f.close()
-                with open(all_commit, "a") as f:
-                    f.write(string)
-                    f.write("\n")
-                    f.write("----------")
-                    f.write("\n")
-                    f.close()
-                print("commited successfully in clinet commit of {}".format(Repo))
+            contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients', for_who, Repo,
+                                            "contributers.txt")
+            if os.path.exists(contributer_path):
+                file = open(contributer_path)
+                if NAME in file.read():
+                    file.close()
+                    with open(client_commit, "a") as f:
+                        f.write(string)
+                        f.write("\n")
+                        f.write("----------")
+                        f.write("\n")
+                        f.close()
+                    with open(all_commit, "a") as f:
+                        f.write(string)
+                        f.write("\n")
+                        f.write("----------")
+                        f.write("\n")
+                        f.close()
+                    print("commited successfully in clinet commit of {}".format(Repo))
+                else:
+                    file.close()
+                    print("you dont have permission to commit -.-")
             else:
-                file.close()
-                print("you dont have permission to commit -.-")
+                #this mean this Repo is pull from another user
 
+                        with open(client_commit, "a") as f:
+                            f.write(string)
+                            f.write("\n")
+                            f.write("----------")
+                            f.write("\n")
+                            f.close()
+                        with open(all_commit, "a") as f:
+                            f.write(string)
+                            f.write("\n")
+                            f.write("----------")
+                            f.write("\n")
+                            f.close()
+                        print("commited successfully in clinet commit of {}".format(Repo))
 
 
 def send_msg(client, msg):
@@ -338,6 +317,12 @@ def create_dir(dir_name, paren_path):
     if not os.path.exists(path):
         os.mkdir(path)
         print("Directory '% s' created" % directory)
+
+
+def remove_directory_contents(directory):
+    for root, dirs, files in os.walk(directory):
+        for name in files:
+            os.remove(os.path.join(root, name))
 
 
 if __name__ == '__main__':
