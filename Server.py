@@ -56,8 +56,8 @@ def handle_client(connection, addrss):
             f = open(all_commit_path, "x")
             f.close()
             string = "yay successfully sign up.. what do you want now ? \n"
-            string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
-            string += "want pull\nwant push:Repo:Repofor\nwant download\nclient commit\disconnect"
+            string += "create_Repo:RepoName:pborpv\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
+            string += "want pull:Repo:forwho\nwant push:Repo:Repofor\nwant download\nclient commit\disconnect"
             connection.send(string.encode(ENCODING))
 
             print(";;;;"+str(username))
@@ -74,8 +74,8 @@ def handle_client(connection, addrss):
             print("here")
             if flag == True:
                 string = "Successfully log in...what do you want now ?\n"
-                string += "create_Repo:RepoName\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
-                string += "want pull\nwant push:Repo:Repofor\nwant download\nclient commit"
+                string += "create_Repo:RepoName:pborpv\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
+                string += "want pull:Repo:forwho\nwant push:Repo:Repofor\nwant download\nclient commit"
                 connection.send(string.encode(ENCODING))
 
 
@@ -85,6 +85,7 @@ def handle_client(connection, addrss):
 
         if "create_Repo" in msg:
             string = str(msg).split(":")
+
             print(username)
             parent_dir = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username)
             create_dir(string[1], parent_dir)
@@ -97,10 +98,25 @@ def handle_client(connection, addrss):
             contributer = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase", username, string[1],
                                        "contributer")
             contributer += ".txt"
+
+
             f = open(contributer, "x")
             f.close()
+            if str(string[2]) == "private":
+                with open(contributer, "w") as f:
+                    string = "private"
+                    f.write(string)
+                    f.write("\n")
+                    f.close()
+            elif str(string[2]) == "public":
+                with open(contributer, "w") as f:
+                    string = "public"
+                    f.write(string)
+                    f.write("\n")
+                    f.close()
 
-            with open(contributer, "w") as f:
+
+            with open(contributer, "a") as f:
                 string="owner:"+str(username)
                 f.write(string)
                 f.write("\n")
@@ -209,8 +225,32 @@ def handle_client(connection, addrss):
             file_object.close()
 
         if "want pull" in msg:
-            string = "Ok send which Repo from Who?!"
-            connection.send(string.encode(ENCODING))
+            string=str(msg).split(":")
+            contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', string[2], string[1],"contributer.txt")
+            file = open(contributer_path)
+            print(file.read())
+            file.close()
+            file = open(contributer_path)
+            if "private" in file.read():
+                file.close()
+                file = open(contributer_path)
+                if username in file.read():
+                    file.close()
+                    string="this Repo is private but you have access to pull"
+                    connection.send(string.encode(ENCODING))
+                else:
+                    file.close()
+                    string="this Repo is private and you have not access to pull"
+                    connection.send(string.encode(ENCODING))
+            file.close()
+            file = open(contributer_path)
+            if "public" in file.read():
+
+                file.close()
+                string="This Repo is public..Be free to pull"
+                connection.send(string.encode(ENCODING))
+
+
 
         if "please pull" in msg:
             splitt = str(msg).split("#")
@@ -250,8 +290,31 @@ def handle_client(connection, addrss):
 
 
         if "want download" in msg:
-            string = "Ok send information above..."
-            connection.send(str(string).encode(ENCODING))
+            string=str(msg).split(":")
+
+            contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', string[2],
+                                            string[1], "contributer.txt")
+            file = open(contributer_path)
+            print(file.read())
+            file.close()
+            file = open(contributer_path)
+            if "private" in file.read():
+                file.close()
+                file = open(contributer_path)
+                if username in file.read():
+                    file.close()
+                    string = "this Repo is private but you have access to download"
+                    connection.send(string.encode(ENCODING))
+                else:
+                    file.close()
+                    string = "this Repo is private and you have not access to download"
+                    connection.send(string.encode(ENCODING))
+            file.close()
+            file = open(contributer_path)
+            if "public" in file.read():
+                file.close()
+                string = "This Repo is public..Be free to download"
+                connection.send(string.encode(ENCODING))
 
         if "Go to download" in msg:
             splitt = str(msg).split(":")

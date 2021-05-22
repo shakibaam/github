@@ -10,10 +10,12 @@ NAME = ""
 
 # lets Go#username:password  sign up
 # log in#user:pass  sign in
-# create_Repo:RepoName
+# create_Repo:RepoName:publicorprivate
 # subDir#Repo:nameofsubdir:forwho:pathtosave
 # add_contributer:RepoName:username_toadd:Repofor
 # want push:Reponame:usernameRepofor
+#want pull:Reponame:forwho
+#want download:fromwhichRepo:forwho
 
 
 def main():
@@ -161,50 +163,97 @@ def main():
                     print(message)
 
             if "want pull" in Request:
+                splitt=str(Request).split(":")
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-                # print(message)
+                if "This Repo is public" in message:
+                    print(message)
 
-                pull_string = ""
-                pull_string += "please pull#"
-                which_user = input("Enter which user you  want?")
-                which_repo = input("Enter which repo from {}".format(which_user))
-                pull_string += str(which_user)
-                pull_string += "#"
-                pull_string += str(which_repo)
-                send_msg(s, pull_string)
-                Repo_address = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-                if "nothing found" in Repo_address:
-                    print(Repo_address)
+                    pull_string = ""
+                    pull_string += "please pull#"
+                    which_user =splitt[2]
+                    which_repo = splitt[1]
+                    pull_string += str(which_user)
+                    pull_string += "#"
+                    pull_string += str(which_repo)
+                    send_msg(s, pull_string)
+                    Repo_address = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                    if "nothing found" in Repo_address:
+                        print(Repo_address)
 
-                else:
-                    print(Repo_address)
-                    create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
-                    pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)
+                    else:
+                        print(Repo_address)
+                        create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
+                        pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)
 
-                    for root, subdirectories, files in os.walk(Repo_address):
-                        root1 = root.replace(Repo_address,
-                                             os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
-                                                          which_repo))
-                        for subdirectory in subdirectories:
-                            print(os.path.join(root1, subdirectory))
-                            create_dir(subdirectory, root1)
-                        for file in files:
-                            print(os.path.join(root1, file))
+                        for root, subdirectories, files in os.walk(Repo_address):
+                            root1 = root.replace(Repo_address,
+                                                 os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                              which_repo))
+                            for subdirectory in subdirectories:
+                                print(os.path.join(root1, subdirectory))
+                                create_dir(subdirectory, root1)
+                            for file in files:
+                                print(os.path.join(root1, file))
 
-                            with open(f"{os.path.join(root, file)}", "r") as f:
-                                content = f.read()
-                                f.close()
-                            if  not os.path.basename(os.path.join(root1, file)) == "contributer.txt":
-                                if os.path.basename(os.path.join(root1, file)) == "commits.txt":
-                                    with open(os.path.join(root1, "client_commit.txt"), "w") as f:
-                                        f.write(content)
-                                        f.close()
-                                else:
-                                    with open(os.path.join(root1, file), "w") as f:
-                                        f.write(content)
-                                        f.close()
+                                with open(f"{os.path.join(root, file)}", "r") as f:
+                                    content = f.read()
+                                    f.close()
+                                if  not os.path.basename(os.path.join(root1, file)) == "contributer.txt":
+                                    if os.path.basename(os.path.join(root1, file)) == "commits.txt":
+                                        with open(os.path.join(root1, "client_commit.txt"), "w") as f:
+                                            f.write(content)
+                                            f.close()
+                                    else:
+                                        with open(os.path.join(root1, file), "w") as f:
+                                            f.write(content)
+                                            f.close()
 
-                    print("pull successfully =))")
+                        print("pull successfully =))")
+                elif "private but you have access" in message:
+                    print(message)
+                    pull_string = ""
+                    pull_string += "please pull#"
+                    which_user = splitt[2]
+                    which_repo = splitt[1]
+                    pull_string += str(which_user)
+                    pull_string += "#"
+                    pull_string += str(which_repo)
+                    send_msg(s, pull_string)
+                    Repo_address = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                    if "nothing found" in Repo_address:
+                        print(Repo_address)
+
+                    else:
+                        print(Repo_address)
+                        create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
+                        pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)
+
+                        for root, subdirectories, files in os.walk(Repo_address):
+                            root1 = root.replace(Repo_address,
+                                                 os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                              which_repo))
+                            for subdirectory in subdirectories:
+                                print(os.path.join(root1, subdirectory))
+                                create_dir(subdirectory, root1)
+                            for file in files:
+                                print(os.path.join(root1, file))
+
+                                with open(f"{os.path.join(root, file)}", "r") as f:
+                                    content = f.read()
+                                    f.close()
+                                if not os.path.basename(os.path.join(root1, file)) == "contributer.txt":
+                                    if os.path.basename(os.path.join(root1, file)) == "commits.txt":
+                                        with open(os.path.join(root1, "client_commit.txt"), "w") as f:
+                                            f.write(content)
+                                            f.close()
+                                    else:
+                                        with open(os.path.join(root1, file), "w") as f:
+                                            f.write(content)
+                                            f.close()
+
+                        print("pull successfully =))")
+                elif "private but you have not access" in message:
+                    print(message)
 
             if "add_contributer" in Request:
                 splitt = str(Request).split(":")
@@ -223,33 +272,99 @@ def main():
                     print(message)
 
             if "want download" in Request:
+                splitt=str(Request).split(":")
+                Repo=splitt[1]
+                from_who=splitt[2]
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+
                 if message:
                     print(message)
-                file_name = input("Enter file name you want download")
-                from_who = input("Enter user you want download from")
-                Repo = input("Enter which Repo?")
-                path = input("Enter path in Repo that file exist in")
-                download = "Go to download"
-                download += ":"
-                download += str(file_name)
-                download += ":"
-                download += from_who
-                download += ":"
-                download += Repo
-                download += ":"
-                download += path
-                send_msg(s, download)
-                msg = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
-                if "nothing found" in msg:
-                    print(msg)
-                else:
-                    file1 = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, file_name)
-                    # file1.close()
-                    with open(file1, "a") as f:
-                        f.write(msg)
-                        f.close()
-                    print("download successfully ;)")
+                if "private but you have access" in message:
+
+                    file_name = input("Enter file name you want download")
+                    # from_who = input("Enter user you want download from")
+                    # Repo = input("Enter which Repo?")
+                    path = input("Enter path in Repo that file exist in")
+                    download = "Go to download"
+                    download += ":"
+                    download += str(file_name)
+                    download += ":"
+                    download += from_who
+                    download += ":"
+                    download += Repo
+                    download += ":"
+                    download += path
+                    send_msg(s, download)
+                    msg = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                    if "nothing found" in msg:
+                        print(msg)
+                    else:
+                        file1 = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, file_name)
+                        # file1.close()
+                        with open(file1, "a") as f:
+                            f.write(msg)
+                            f.close()
+                        print("download successfully ;)")
+                if "This Repo is public" in message:
+                    print(message)
+                    file_name = input("Enter file name you want download")
+                    # from_who = input("Enter user you want download from")
+                    # Repo = input("Enter which Repo?")
+                    path = input("Enter path in Repo that file exist in")
+                    download = "Go to download"
+                    download += ":"
+                    download += str(file_name)
+                    download += ":"
+                    download += from_who
+                    download += ":"
+                    download += Repo
+                    download += ":"
+                    download += path
+                    send_msg(s, download)
+                    msg = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                    if "nothing found" in msg:
+                        print(msg)
+                    else:
+                        file1 = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, file_name)
+                        # file1.close()
+                        with open(file1, "a") as f:
+                            f.write(msg)
+                            f.close()
+                        print("download successfully ;)")
+
+
+                    if "private but you have access" in message:
+                        print(message)
+
+                        file_name = input("Enter file name you want download")
+                        # from_who = input("Enter user you want download from")
+                        # Repo = input("Enter which Repo?")
+                        path = input("Enter path in Repo that file exist in")
+                        download = "Go to download"
+                        download += ":"
+                        download += str(file_name)
+                        download += ":"
+                        download += from_who
+                        download += ":"
+                        download += Repo
+                        download += ":"
+                        download += path
+                        send_msg(s, download)
+                        msg = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                        if "nothing found" in msg:
+                            print(msg)
+                        else:
+                            file1 = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, file_name)
+                            # file1.close()
+                            with open(file1, "a") as f:
+                                f.write(msg)
+                                f.close()
+                            print("download successfully ;)")
+                    if "private but you have not access" in message:
+                        print(message)
+
+
+
 
         else:
 
