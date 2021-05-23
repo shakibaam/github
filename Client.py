@@ -1,4 +1,5 @@
 import os
+import shutil
 import socket
 from datetime import datetime
 
@@ -199,6 +200,8 @@ def main():
 
                     else:
                         print(Repo_address)
+                        if os.path.exists(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)):
+                            shutil.rmtree(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
 
 
                         create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
@@ -244,6 +247,8 @@ def main():
 
                     else:
                         print(Repo_address)
+                        if os.path.exists(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)):
+                            shutil.rmtree(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,which_repo))
                         create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
                         pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)
 
