@@ -1,4 +1,5 @@
 import csv
+import datetime
 import shutil
 import socket
 import threading
@@ -58,7 +59,7 @@ def handle_client(connection, addrss):
             f.close()
             string = "yay successfully sign up.. what do you want now ? \n"
             string += "create_Repo:RepoName:pborpv\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
-            string += "want pull:Repo:forwho\nwant push:Repo:Repofor\nwant download\nclient commit\disconnect"
+            string += "want pull:Repo:forwho\nwant push:Repo:Repofor\nwant download\nclient commit\nif synch:Reponame:owner\ndisconnect"
             connection.send(string.encode(ENCODING))
 
             print(";;;;"+str(username))
@@ -76,7 +77,7 @@ def handle_client(connection, addrss):
             if flag == True:
                 string = "Successfully log in...what do you want now ?\n"
                 string += "create_Repo:RepoName:pborpv\nsubDir#Repo:nameofsubdir:forwho:pathtosave\nadd_contributer:RepoName:username:Repofor\n"
-                string += "want pull:Repo:forwho\nwant push:Repo:Repofor\nwant download\nclient commit"
+                string += "want pull:Repo:forwho\nwant push:Repo:Repofor\nwant download\nclient commitif synch:Reponame:owner\ndisconnect"
                 connection.send(string.encode(ENCODING))
 
 
@@ -300,6 +301,73 @@ def handle_client(connection, addrss):
             else:
                 string = "you dont have access to add contributer -.-"
                 connection.send(str(string).encode(ENCODING))
+        if "check synch" in msg:
+            splitt=str(msg).split("#")
+            Repo=splitt[1]
+            last_time=splitt[2]
+            for_who=splitt[3]
+            commit_path=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",for_who,Repo,"commits.txt")
+            if os.path.exists(commit_path):
+                if last_time!="empty":
+                    date_time_str_local = str(last_time)
+                    print(date_time_str_local)
+
+                    # date_time_obj_local = datetime.datetime.strptime(date_time_str_local, '%Y-%m-%d %H:%M:%S.%f')
+                    myFormat = "%Y-%m-%d %H:%M:%S"
+                    date_time_obj_local=date_time_str_local.strip(myFormat)
+
+                    times=[]
+                    if os.stat(commit_path).st_size != 0:
+                        with open(f"{commit_path}", "r") as f:
+                            content = f.read()
+                            f.close()
+                        commits = str(content).split("----------")
+
+                        for i in commits:
+                            temp = str(i).split("&&")
+                            if temp[0] != "\n":
+
+                                str(temp[4]).replace("\n", "")
+                                if temp[2] == Repo:
+                                    last_time = temp[4]
+                                    times.append(last_time)
+
+                        date_time_str_server = str(times[len(times)-1])
+                        date_time_obj_server = date_time_str_server.strip(myFormat)
+                        if date_time_obj_local>date_time_obj_server :
+                            string="Server is not update please push in order to server be updated"
+                            connection.send(str(string).encode(ENCODING))
+                        elif date_time_obj_local==date_time_obj_server:
+                            string="all server and you synchroned"
+                            connection.send(str(string).encode(ENCODING))
+                        elif date_time_obj_local<date_time_obj_server:
+                            string="Server is update but you are not...type want pull to be updated"
+                            connection.send(str(string).encode(ENCODING))
+                    else:
+                        string = "Server is not update please push in order to server be updated"
+                        connection.send(str(string).encode(ENCODING))
+
+                else:
+                    if os.stat(commit_path).st_size == 0:
+                        string = "all server and you synchroned"
+                        connection.send(str(string).encode(ENCODING))
+                    else:
+                        string = "Server is update but you are not...type want pull to be updated"
+                        connection.send(str(string).encode(ENCODING))
+            else:
+                string = "what you want nothing found...try again"
+                connection.send(str(string).encode(ENCODING))
+
+
+
+
+
+
+
+
+
+
+
 
 
 

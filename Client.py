@@ -17,6 +17,7 @@ NAME = ""
 # want push:Reponame:usernameRepofor
 #want pull:Reponame:forwho
 #want download:fromwhichRepo:forwho
+#if synch:Reponame:ownerofRepo
 
 
 def main():
@@ -295,6 +296,57 @@ def main():
                 message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
                 if message:
                     print(message)
+            if "if synch" in Request:
+                splitt=str(Request).split(":")
+                Repo=splitt[1]
+                for_who=splitt[2]
+                commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,"all_commit.txt")
+                times=[]
+
+
+                if os.stat(commit_path).st_size != 0:
+                    with open(f"{commit_path}", "r") as f:
+                        content = f.read()
+                        f.close()
+                    commits = str(content).split("----------")
+
+                    for i in commits:
+                        temp = str(i).split("&&")
+                        if temp[0] != "\n":
+
+                            str(temp[4]).replace("\n", "")
+                            if temp[2]==Repo:
+                                last_time=temp[4]
+                                times.append(last_time)
+                    print(times[len(times)-1])
+                    string="check synch"
+                    string+="#"
+                    string+=str(Repo)
+                    string+="#"
+                    string+=str(times[len(times)-1])
+                    string+="#"
+                    string+=for_who
+                    send_msg(s,string)
+                    message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                    if message:
+                        print(message)
+                else:
+                    string = "check synch"
+                    string += "#"
+                    string += str(Repo)
+                    string += "#"
+                    string += "empty"
+                    string += "#"
+                    string += for_who
+                    send_msg(s, string)
+                    message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
+                    if message:
+                        print(message)
+
+
+
+
+
 
             if "want download" in Request:
                 splitt=str(Request).split(":")
@@ -424,6 +476,10 @@ def main():
                 else:
                     file.close()
                     print("you dont have permission to commit -.-")
+
+
+
+
             else:
                 #this mean this Repo is pull from another user
 
