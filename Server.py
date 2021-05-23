@@ -1,4 +1,5 @@
 import csv
+import shutil
 import socket
 import threading
 import os
@@ -157,6 +158,13 @@ def handle_client(connection, addrss):
                 if (username in file.read()):
                     string = "You have access to push ;)"
                     connection.send(string.encode(ENCODING))
+                    for root, dirs, files in os.walk(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo)):
+
+                        for name in files:
+                            if name!="commits.txt" and name!="contributer.txt":
+                             os.remove(os.path.join(root, name))
+                        for dir in dirs:
+                            shutil.rmtree(os.path.join(root, dir))
 
                 else:
                     string = "Sorry you dont have permission -.- you can try push in your git server if you want"
@@ -184,14 +192,20 @@ def handle_client(connection, addrss):
             file = open(contributers)
             if (username in file.read()):
                 string = "You have access to push ;)"
+                file.close()
                 connection.send(string.encode(ENCODING))
 
+                string = str(msg).split("#")
                 content = string[4]
+                print(content)
+                print(";;;;;;;")
                 # read_file = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", username, file_path)
                 # with open(f"{read_file}", "r") as f:
                 #     content = f.read()
 
-                write_file = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, file_path)
+                write_file = os.path.join(file_path)
+                print(write_file)
+                print("===========")
 
                 with open(write_file, "w") as f:
                     f.write(content)

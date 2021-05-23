@@ -97,8 +97,7 @@ def main():
                 if "You have access" in message:
                     print(message)
                     changed_file = []
-                    commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo,
-                                               "client_commit.txt")
+                    commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo,"client_commit.txt")
 
                     if os.stat(commit_path).st_size != 0:
                         with open(f"{commit_path}", "r") as f:
@@ -114,22 +113,40 @@ def main():
 
                                 if not temp[3] in changed_file:
                                     changed_file.append(temp[3])
+                        local_path=os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",NAME,Repo)
+                        for root, subdirectories, files in os.walk(local_path):
+                            root1 = root.replace(local_path,os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",for_who,Repo))
 
-                        for file in changed_file:
-                            read = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, file)
-                            with open(f"{read}", "r") as f:
-                                content = f.read()
-                                f.close()
-                            big_string = ""
-                            big_string += "Go to Push#"
-                            big_string += str(file)
-                            big_string += "#"
-                            big_string += Repo
-                            big_string += "#"
-                            big_string += for_who
-                            big_string += "#"
-                            big_string += str(content)
-                            send_msg(s, big_string)
+                            for subdirectory in subdirectories:
+                                # print(os.path.join(root1, subdirectory))
+                                if not os.path.exists(os.path.join(root1, subdirectory)):
+                                    print(root1)
+                                    create_dir(subdirectory, root1)
+                            # for file in files:
+                            #     print(os.path.join(root1, file))
+
+                        for root, dirs, files in os.walk(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo)):
+                            for name in files:
+                               if name!="client_commit.txt" and name!="contributers.txt":
+
+                        # for file in changed_file:
+                                root1 = root.replace(local_path,os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",for_who, Repo))
+                                read = os.path.join(root,name)
+                                with open(f"{read}", "r") as f:
+                                    content = f.read()
+                                    f.close()
+                                print(content)
+                                read = os.path.join(root1, name)
+                                big_string = ""
+                                big_string += "Go to Push#"
+                                big_string += str(read)
+                                big_string += "#"
+                                big_string += Repo
+                                big_string += "#"
+                                big_string += for_who
+                                big_string += "#"
+                                big_string += str(content)
+                                send_msg(s, big_string)
 
                         message = (s.recv(MESSAGE_LEN_SIZE)).decode(ENCODING)
                         if message:
@@ -182,6 +199,8 @@ def main():
 
                     else:
                         print(Repo_address)
+
+
                         create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
                         pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)
 
@@ -234,7 +253,8 @@ def main():
                                                               which_repo))
                             for subdirectory in subdirectories:
                                 print(os.path.join(root1, subdirectory))
-                                create_dir(subdirectory, root1)
+                                if  not os.path.exists():
+                                    create_dir(subdirectory, root1)
                             for file in files:
                                 print(os.path.join(root1, file))
 
@@ -371,7 +391,7 @@ def main():
             Repo = input("Enter Repo name")
             for_who = input("Enter Repo for ?")
             commit = input("Enter your commit message")
-            target_file = input("Enter address of file that you change")
+            target_file = input("Enter address of file that you change(if you delete it just type: no address)")
             now = datetime.now()
             string = str(NAME) + "&&" + str(commit) + "&&" + str(Repo) + "&&" + str(target_file) + "&&" + str(now)
             client_commit = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, Repo,
