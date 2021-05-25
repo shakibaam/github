@@ -135,7 +135,7 @@ def handle_client(connection, addrss):
             for_who = string[1].split(":")[2]
             path = string[1].split(":")[3]
             contributers = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo,
-                                        "contributer.txt")
+                                        "contributers.txt")
             file = open(contributers)
             if (username in file.read()):
                 parent_dir = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase",path)
@@ -154,7 +154,7 @@ def handle_client(connection, addrss):
             for_who=string[2]
             if os.path.exists(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo)):
                 contributers = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo,
-                                            "contributer.txt")
+                                            "contributers.txt")
                 file = open(contributers)
                 if (username in file.read()):
                     string = "You have access to push ;)"
@@ -162,7 +162,7 @@ def handle_client(connection, addrss):
                     for root, dirs, files in os.walk(os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo)):
 
                         for name in files:
-                            if name!="commits.txt" and name!="contributer.txt":
+                            if name!="commits.txt" and name!="contributers.txt":
                              os.remove(os.path.join(root, name))
                         for dir in dirs:
                             shutil.rmtree(os.path.join(root, dir))
@@ -189,7 +189,7 @@ def handle_client(connection, addrss):
             Repo_name = string[2]
             for_who = string[3]
             contributers = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', for_who, Repo_name,
-                                        "contributer.txt")
+                                        "contributers.txt")
             file = open(contributers)
             if (username in file.read()):
                 string = "You have access to push ;)"
@@ -285,7 +285,7 @@ def handle_client(connection, addrss):
             Repo = splitt[1]
             cont_name = splitt[2]
             contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', splitt[3], Repo,
-                                            "contributer.txt")
+                                            "contributers.txt")
             file=open(contributer_path)
             if username in file.read():
                 file.close()
@@ -375,7 +375,7 @@ def handle_client(connection, addrss):
             string=str(msg).split(":")
 
             contributer_path = os.path.join('C:\\Users\\Asus\\PycharmProjects\\CN_P2\\UsersDataBase', string[2],
-                                            string[1], "contributer.txt")
+                                            string[1], "contributers.txt")
             file = open(contributer_path)
             print(file.read())
             file.close()

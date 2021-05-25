@@ -2,6 +2,7 @@ import os
 import shutil
 import socket
 from datetime import datetime
+import time
 
 PORT = 7447
 MESSAGE_LEN_SIZE = 1024
@@ -111,7 +112,7 @@ def main():
                             temp = str(i).split("&&")
                             if temp[0] != "\n":
                                 print(temp)
-                                str(temp[4]).replace("\n", "")
+                                temp[4]=str(temp[4]).replace("\n", "")
 
                                 if not temp[3] in changed_file:
                                     changed_file.append(temp[3])
@@ -201,39 +202,156 @@ def main():
 
                     else:
                         print(Repo_address)
-                        if os.path.exists(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)):
-                            shutil.rmtree(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
+                        time_modify_commit=dict()
+                        change=dict()
+                        flags=[]
+                        commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,"all_commit.txt")
+                        if os.stat(commit_path).st_size != 0:
+                            with open(f"{commit_path}", "r") as f:
+                                content = f.read()
+                                f.close()
+                            commits = str(content).split("----------")
 
+                            for i in commits:
+                                temp = str(i).split("&&")
+                                if temp[0] != "\n":
 
-                        create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
-                        pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)
-
-                        for root, subdirectories, files in os.walk(Repo_address):
-                            root1 = root.replace(Repo_address,
-                                                 os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
-                                                              which_repo))
-                            for subdirectory in subdirectories:
-                                print(os.path.join(root1, subdirectory))
-                                create_dir(subdirectory, root1)
-                            for file in files:
-                                print(os.path.join(root1, file))
-
-                                with open(f"{os.path.join(root, file)}", "r") as f:
-                                    content = f.read()
-                                    f.close()
-                                if  not os.path.basename(os.path.join(root1, file)) == "contributer.txt":
-                                    if os.path.basename(os.path.join(root1, file)) == "commits.txt":
-                                        with open(os.path.join(root1, "client_commit.txt"), "w") as f:
-                                            f.write(content)
-                                            f.close()
+                                    temp[4]=str(temp[4]).replace("\n", "")
+                                    file_path=temp[3]
+                                    if os.path.basename(file_path) not in time_modify_commit:
+                                        time_modify_commit[os.path.basename(file_path)]=temp[4]
                                     else:
-                                        with open(os.path.join(root1, file), "w") as f:
-                                            f.write(content)
-                                            f.close()
+                                        time_modify_commit[os.path.basename(file_path)] = temp[4]
+                        # file_modify_time=dict()
+                            print("commit dates:")
+                            print(time_modify_commit)
 
-                        print("pull successfully =))")
+                            for root, subdirectories, files in os.walk(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,which_repo)):
+
+                                for file in files:
+                                    if str(file)!="client_commit.txt" and str(file)!="contributers.txt":
+                                        file_path=os.path.join(root,file)
+                                        ti_m = os.path.getmtime(os.path.join(root,file))
+                                        m_ti = time.ctime(ti_m)
+                                        t_obj = time.strptime(m_ti)
+                                        t_str_commit=time_modify_commit[os.path.basename(file_path)]
+                                        T_stamp = time.strftime("%Y-%m-%d %H:%M:%S", t_obj)
+                                        myFormat = "%Y-%m-%d %H:%M:%S"
+                                        t_obj=T_stamp.strip(myFormat)
+                                        t_obj_commit = t_str_commit.strip(myFormat)
+                                        change[os.path.join(root,file)]=T_stamp
+                                        if t_obj_commit< t_obj:
+                                            flags.append(True)
+                            print(change)
+                            if True in flags:
+                                print("you have some unommited change...plz commit then try to pull")
+                                for key, value in change.items():
+                                    print("you modify {0} in {1}".format(key, value))
+                            else:
+                                contributer_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,which_repo, "contributers.txt")
+                                with open(f"{contributer_path}", "r") as f:
+                                    content_contributer = f.read()
+                                    f.close()
+
+                                if os.path.exists(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)):
+                                    shutil.rmtree(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo))
+
+                                create_dir(which_repo,
+                                           os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
+                                pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                         which_repo)
+                                with open(contributer_path, "w") as f:
+                                    f.write(content_contributer)
+                                    f.close()
+
+                                for root, subdirectories, files in os.walk(Repo_address):
+                                    root1 = root.replace(Repo_address,
+                                                         os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",
+                                                                      NAME, which_repo))
+                                    for subdirectory in subdirectories:
+                                        print(os.path.join(root1, subdirectory))
+                                        create_dir(subdirectory, root1)
+                                    for file in files:
+                                        print(os.path.join(root1, file))
+
+                                        with open(f"{os.path.join(root, file)}", "r") as f:
+                                            content = f.read()
+                                            f.close()
+                                        if not os.path.basename(os.path.join(root, file)) == "contributer.txt":
+                                            if os.path.basename(os.path.join(root, file)) == "commits.txt":
+                                                with open(os.path.join(root1, "client_commit.txt"), "w") as f:
+                                                    f.write(content)
+                                                    f.close()
+                                            else:
+                                                with open(os.path.join(root1, file), "w") as f:
+                                                    f.write(content)
+                                                    f.close()
+
+                                print("pull successfully =))")
+
+                        else:
+                            for root, subdirectories, files in os.walk(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,which_repo)):
+
+                                for file in files:
+                                    if str(file) != "client_commit.txt" and str(file) != "contributers.txt":
+                                        file_path = os.path.join(root, file)
+                                        ti_m = os.path.getmtime(os.path.join(root, file))
+                                        m_ti = time.ctime(ti_m)
+                                        t_obj = time.strptime(m_ti)
+                                        T_stamp = time.strftime("%Y-%m-%d %H:%M:%S", t_obj)
+
+                                        change[os.path.join(root, file)] = T_stamp
+                                        if T_stamp:
+                                            flags.append(True)
+                            print(change)
+                            if True in flags:
+                                print("you have some unommited change...plz commit then try to pull")
+                                for key, value in change.items():
+                                    print("you modify {0} in {1}".format(key, value))
+                            else:
+
+                                if os.path.exists(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                     which_repo)):
+                                    shutil.rmtree(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                     which_repo))
+
+                                create_dir(which_repo,
+                                           os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",
+                                                        NAME))
+                                pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",
+                                                         NAME, which_repo)
+
+                                for root, subdirectories, files in os.walk(Repo_address):
+                                    root1 = root.replace(Repo_address, os.path.join(
+                                        "C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo))
+                                    for subdirectory in subdirectories:
+                                        print(os.path.join(root1, subdirectory))
+                                        create_dir(subdirectory, root1)
+                                    for file in files:
+                                        print(os.path.join(root1, file))
+
+                                        with open(f"{os.path.join(root, file)}", "r") as f:
+                                            content = f.read()
+                                            f.close()
+                                            if not os.path.basename(os.path.join(root, file)) == "contributer.txt":
+                                                if os.path.basename(os.path.join(root, file)) == "commits.txt":
+                                                    with open(os.path.join(root1, "client_commit.txt"), "w") as f:
+                                                        f.write(content)
+                                                        f.close()
+                                            else:
+                                                with open(os.path.join(root1, file), "w") as f:
+                                                    f.write(content)
+                                                    f.close()
+
+                                print("pull successfully =))")
+
                 elif "private but you have access" in message:
                     print(message)
+
                     pull_string = ""
                     pull_string += "please pull#"
                     which_user = splitt[2]
@@ -248,36 +366,155 @@ def main():
 
                     else:
                         print(Repo_address)
-                        if os.path.exists(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)):
-                            shutil.rmtree(os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,which_repo))
-                        create_dir(which_repo, os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
-                        pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)
+                        time_modify_commit = dict()
+                        change = dict()
+                        flags = []
+                        commit_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                   "all_commit.txt")
+                        if os.stat(commit_path).st_size != 0:
+                            with open(f"{commit_path}", "r") as f:
+                                content = f.read()
+                                f.close()
+                            commits = str(content).split("----------")
 
-                        for root, subdirectories, files in os.walk(Repo_address):
-                            root1 = root.replace(Repo_address,
-                                                 os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
-                                                              which_repo))
-                            for subdirectory in subdirectories:
-                                print(os.path.join(root1, subdirectory))
-                                if  not os.path.exists():
-                                    create_dir(subdirectory, root1)
-                            for file in files:
-                                print(os.path.join(root1, file))
+                            for i in commits:
+                                temp = str(i).split("&&")
+                                if temp[0] != "\n":
 
-                                with open(f"{os.path.join(root, file)}", "r") as f:
-                                    content = f.read()
-                                    f.close()
-                                if not os.path.basename(os.path.join(root1, file)) == "contributer.txt":
-                                    if os.path.basename(os.path.join(root1, file)) == "commits.txt":
-                                        with open(os.path.join(root1, "client_commit.txt"), "w") as f:
-                                            f.write(content)
-                                            f.close()
+                                    temp[4]=str(temp[4]).replace("\n", "")
+                                    file_path = temp[3]
+                                    if os.path.basename(file_path) not in time_modify_commit:
+                                        time_modify_commit[os.path.basename(file_path)] = temp[4]
                                     else:
-                                        with open(os.path.join(root1, file), "w") as f:
-                                            f.write(content)
-                                            f.close()
+                                        time_modify_commit[os.path.basename(file_path)] = temp[4]
+                            print("commit dates:")
+                            print(time_modify_commit)
 
-                        print("pull successfully =))")
+                            for root, subdirectories, files in os.walk(
+                                    os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)):
+
+                                for file in files:
+                                    if str(file) != "client_commit.txt" and str(file) != "contributers.txt":
+                                        file_path = os.path.join(root, file)
+                                        ti_m = os.path.getmtime(os.path.join(root, file))
+                                        m_ti = time.ctime(ti_m)
+                                        t_obj = time.strptime(m_ti)
+                                        t_str_commit = time_modify_commit[os.path.basename(file_path)]
+                                        T_stamp = time.strftime("%Y-%m-%d %H:%M:%S", t_obj)
+                                        myFormat = "%Y-%m-%d %H:%M:%S"
+                                        t_obj = T_stamp.strip(myFormat)
+                                        t_obj_commit = t_str_commit.strip(myFormat)
+                                        change[os.path.join(root, file)] = T_stamp
+                                        if t_obj_commit < t_obj:
+                                            flags.append(True)
+                            if True in flags:
+                                print("you have some unommited change...plz commit then try to pull")
+                                for key, value in change.items():
+                                    print("you modify {0} in {1}".format(key, value))
+                            else:
+                                contributer_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",
+                                                                NAME, which_repo, "contributers.txt")
+                                with open(f"{contributer_path}", "r") as f:
+                                    content_contributer = f.read()
+                                    f.close()
+
+                                if os.path.exists(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                     which_repo)):
+                                    shutil.rmtree(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                     which_repo))
+
+                                create_dir(which_repo,
+                                           os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME))
+                                pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                         which_repo)
+                                with open(contributer_path, "w") as f:
+                                    f.write(content_contributer)
+                                    f.close()
+
+                                for root, subdirectories, files in os.walk(Repo_address):
+                                    root1 = root.replace(Repo_address, os.path.join(
+                                        "C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo))
+                                    for subdirectory in subdirectories:
+                                        print(os.path.join(root1, subdirectory))
+                                        create_dir(subdirectory, root1)
+                                    for file in files:
+                                        print(os.path.join(root1, file))
+
+                                        with open(f"{os.path.join(root, file)}", "r") as f:
+                                            content = f.read()
+                                            f.close()
+                                        if not os.path.basename(os.path.join(root, file)) == "contributer.txt":
+                                            if os.path.basename(os.path.join(root, file)) == "commits.txt":
+                                                with open(os.path.join(root1, "client_commit.txt"), "w") as f:
+                                                    f.write(content)
+                                                    f.close()
+                                            else:
+                                                with open(os.path.join(root1, file), "w") as f:
+                                                    f.write(content)
+                                                    f.close()
+
+                                print("pull successfully =))")
+
+                        else:
+                            for root, subdirectories, files in os.walk(
+                                    os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo)):
+
+                                for file in files:
+                                    if str(file) != "client_commit.txt" and str(file) != "contributers.txt":
+                                        file_path = os.path.join(root, file)
+                                        ti_m = os.path.getmtime(os.path.join(root, file))
+                                        m_ti = time.ctime(ti_m)
+                                        t_obj = time.strptime(m_ti)
+                                        T_stamp = time.strftime("%Y-%m-%d %H:%M:%S", t_obj)
+
+                                        change[os.path.join(root, file)] = T_stamp
+                                        if T_stamp:
+                                            flags.append(True)
+                            print(change)
+                            if True in flags:
+                                print("you have some unommited change...plz commit then try to pull")
+                                for key, value in change.items():
+                                    print("you modify {0} in {1}".format(key, value))
+                            else:
+
+                                if os.path.exists(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                     which_repo)):
+                                    shutil.rmtree(
+                                        os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME,
+                                                     which_repo))
+
+                                create_dir(which_repo,
+                                           os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",
+                                                        NAME))
+                                pull_path = os.path.join("C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients",
+                                                         NAME, which_repo)
+
+                                for root, subdirectories, files in os.walk(Repo_address):
+                                    root1 = root.replace(Repo_address, os.path.join(
+                                        "C:\\Users\\Asus\\PycharmProjects\\CN_P2\\Clients", NAME, which_repo))
+                                    for subdirectory in subdirectories:
+                                        print(os.path.join(root1, subdirectory))
+                                        create_dir(subdirectory, root1)
+                                    for file in files:
+                                        print(os.path.join(root1, file))
+
+                                        with open(f"{os.path.join(root, file)}", "r") as f:
+                                            content = f.read()
+                                            f.close()
+                                            if not os.path.basename(os.path.join(root, file)) == "contributer.txt":
+                                                if os.path.basename(os.path.join(root, file)) == "commits.txt":
+                                                    with open(os.path.join(root1, "client_commit.txt"), "w") as f:
+                                                        f.write(content)
+                                                        f.close()
+                                            else:
+                                                with open(os.path.join(root1, file), "w") as f:
+                                                    f.write(content)
+                                                    f.close()
+
+                                print("pull successfully =))")
                 elif "private but you have not access" in message:
                     print(message)
 
