@@ -1,4 +1,4 @@
-# Git-Like System
+# Github System
 
 This project aims to implement a system similar to Git, which is a distributed version control system. The system allows users to manage their files and repositories.
 
